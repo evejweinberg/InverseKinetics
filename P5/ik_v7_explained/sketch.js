@@ -1,7 +1,7 @@
 var arm1;
 var arm2;
 var armLength = 200;
-var sliderBlength, gui, bButton, aButton;
+var gui;
 var bisOn = false;
 var aisOn = false;
 var disOn = false;
@@ -15,22 +15,21 @@ function setup() {
 
 
   gui = new Gui();
-  // guiResponse();
   gui.setup();
   stroke(255);
   strokeWeight(5);
 
   //set some variables to start
-  arm2 = new drawArm(400, 100, 'a'); //bottom of chain x,y,l
-  arm1 = new drawArm(600, 400, 'b'); //head of chain x,y,l
+  arm2 = new drawArm(400, 100, 'A'); //bottom of chain x,y,l
+  arm1 = new drawArm(600, 400, 'B'); //head of chain x,y,l
 
-  arm3 = new drawArm(300, 100, 'c'); //bottom of chain x,y,l
-  arm4 = new drawArm(200, 400, 'd'); //head of chain x,y,l
+  arm3 = new drawArm(300, 100, 'C'); //bottom of chain x,y,l
+  arm4 = new drawArm(200, 400, 'D'); //head of chain x,y,l
 
 }
 
 function draw() {
-  background(0);
+  background(255);
   gui.togglesworking();
 
   arm1.hingeStart(arm2); //call function, give it elbow joint
@@ -56,21 +55,22 @@ function drawArm(x, y, l) {
 }
 
 drawArm.prototype.display = function() {
-  fill(255);
+  fill(255,0,0);//red
+  noStroke();
   rect(this.x, this.y, 20, 20);
   strokeWeight(5);
-  stroke(255)
+  stroke(255,0,0)
   line(this.x + 10, this.y + 10, this.hingeX, this.hingeY); //draw a line from this x,y to
   //Add a letter in the box
-  fill(255, 0, 0);
+  fill(255);//white
   textAlign(CENTER);
-  textSize(25);
+  textSize(22);
   noStroke();
   text(this.l, this.x + 10, this.y + 13);
 }
 
-function dJoints(armA, armB) {
-  //draw a green line to show it
+function dJoints(armA, armB) {//find the long side of the triangle
+  //draw a green line just to show it
   stroke(0, 255, 0);
   strokeWeight(.5);
   line(armA.x, armA.y, armB.x, armB.y);
