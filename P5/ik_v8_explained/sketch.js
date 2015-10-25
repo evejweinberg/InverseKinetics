@@ -1,4 +1,5 @@
 var armLength = 200;
+
 function setup() {
 createCanvas(800, 800);
 
@@ -25,12 +26,12 @@ function drawLink(x, y, l) {
 }
 
 drawLink.prototype.display = function() {
-  fill(255, 0, 0); //red
-  noStroke();
-  rect(this.x, this.y, 20, 20);
+  // fill(255, 0, 0); //red
+  // noStroke();
+  // rect(this.x, this.y, 20, 20);
   strokeWeight(5);
   stroke(255, 0, 0)
-  line(this.x + 10, this.y + 13, this.elbowX, this.elbowY); //draw a line from this x,y to
+  line(this.x, this.y, this.elbowX, this.elbowY); //draw a line from this x,y to
   //Add a letter in the box
   fill(255); //white
   textAlign(CENTER);
