@@ -26,9 +26,9 @@ function drawLink(x, y, l) {
 }
 
 drawLink.prototype.display = function() {
-  // fill(255, 0, 0); //red
-  // noStroke();
-  // rect(this.x, this.y, 20, 20);
+  fill(255, 0, 0); //red
+  noStroke();
+  rect(this.x, this.y, 20, 20);
   strokeWeight(5);
   stroke(255, 0, 0)
   line(this.x, this.y, this.elbowX, this.elbowY); //draw a line from this x,y to
@@ -38,6 +38,9 @@ drawLink.prototype.display = function() {
   textSize(22);
   noStroke();
   text(this.l, this.x + 10, this.y + 18);
+  // fill(255,0,0);
+  // textSize(14);
+  // text('shoulder',this.x-20,this.y+18)
 }
 
 function dJoints(shoulder, wrist) { 
@@ -64,7 +67,8 @@ drawLink.prototype.linkStart = function(wrist) {
   
   fill(0);
   noStroke();
-  text('P', px, py);
+  text('P', px, py-6);
+  ellipse(px,py,5,5);
 
   this.elbowX = px + h * (wrist.y - this.y) / distance;
   this.elbowY = py - h * (wrist.x - this.x) / distance;
@@ -87,8 +91,11 @@ drawLink.prototype.linkEnd = function(wrist) {
   //draw a circle at the elbow
   fill(0, 0, 255);//blue
   ellipse(this.elbowX, this.elbowY, 25, 25);
+  noStroke();
   textSize(22);
   text('C', this.elbowX - 15, this.elbowY - 15)
+    textSize(12);
+  text('elbow', this.elbowX - 30, this.elbowY -35)
 
   this.display();
 }
