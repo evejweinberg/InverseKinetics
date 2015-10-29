@@ -43,7 +43,7 @@ function setup() {
   Lshin = new BendLimb('L knee', -70, 20, -40, -20, 0, Lthight);
   Rshin = new BendLimb('R knee', 70, 20, -40, -20, 0, Rthight);
   
-  // body.push([neckLimb, headLimb,torso]);
+  // body.push([neckLimb, headLimb,torso,RShoulderLimb,LShoulderLimb,LUpperArmLimb,LLowerArmLimb,Lthight,Rthight,Lshin,Rshin]);
   // console.log(body)
 }
 
@@ -71,7 +71,7 @@ function draw() {
 }
 
 
-// Construct a limb, it will be the length staring at the start joing position, towards the end joint position, not to exceed the min and max degree parameters
+// Construct a static limb, it will be the length staring at the start joing position, towards the end joint position, not to exceed the min and max degree parameters
 var StLimb = function(_label, _length, _startJointX, _startJointY,
   _startJointMinDegrees, _startJointMaxDegrees, _parentEnd) {
   this.label = _label;
@@ -138,12 +138,12 @@ var BendLimb = function(_label, _length, _startJointX, _startJointY,
   this.elbowX;
   this.elbowY;
 
-  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2);
+  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2);//start at this degree
 
 
 }
 
-BendLimb.prototype.dJoints = function(parentEnd, leaderPt) {
+BendLimb.prototype.dJoints = function(parentEnd, leaderPt) {//whatever you feed it later
   return dist(parentEnd.x, parentEnd.y, leaderPt.x, leaderPt.y);
 }
 
@@ -183,9 +183,9 @@ BendLimb.prototype.draw = function() {
 }
 
 
-BendLimb.prototype.linkStart = function(leaderPt) {
-  var distance = dJoints(this, leaderPt);
-  console.log("distance of joints" + dJoints(forearm, leaderPt))
+BendLimb.prototype.linkStart = function(leaderPt) {//where do I call this?
+  var distance = dJoints(this, leaderPt);//itself to what you pass it later. Where do I pass this?
+  // console.log("distance of joints" + dJoints(this.parentEnd, leaderPt))
 
   var a = (Math.pow(this.limbLength, 2) - Math.pow(this.limbLength, 2) + Math.pow(distance, 2) / (2 * distance));
   var h = Math.sqrt(Math.pow(this.limbLength, 2) - Math.pow(a, 2));
@@ -194,10 +194,22 @@ BendLimb.prototype.linkStart = function(leaderPt) {
   var px = this.startJointX + a * (leaderPt.x - this.startJointX) / distance;
   var py = this.startJointY + a * (leaderPt.y - this.startJointY) / distance;
 
-  // fill(0);
-  // noStroke();
-  // text('P', px, py - 6);
-  // ellipse(px, py, 5, 5);
+  this.elbowX = px + h * (leaderPt.y - this.startJointY) / distance;
+  this.elbowY = py - h * (leaderPt.x - this.startJointX) / distance;
+
+  // this.draw();//can I just call this here?
+}
+
+BendLimb.prototype.linkEnd = function(leaderPt) {//where do I call this?
+  var distance = -dJoints(this, leaderPt);//itself to what you pass it later. Where do I pass this?
+  // console.log("distance of joints" + dJoints(this.parentEnd, leaderPt))
+
+  var a = (Math.pow(this.limbLength, 2) - Math.pow(this.limbLength, 2) + Math.pow(distance, 2) / (2 * distance));
+  var h = Math.sqrt(Math.pow(this.limbLength, 2) - Math.pow(a, 2));
+ 
+
+  var px = this.startJointX + a * (leaderPt.x - this.startJointX) / distance;
+  var py = this.startJointY + a * (leaderPt.y - this.startJointY) / distance;
 
   this.elbowX = px + h * (leaderPt.y - this.startJointY) / distance;
   this.elbowY = py - h * (leaderPt.x - this.startJointX) / distance;
