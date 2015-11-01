@@ -34,14 +34,14 @@ function setup() {
   torso = new StLimb("Torso", 200, 100, 100, 90, 90, neckLimb);
   RShoulderLimb = new StLimb("R \nShoulder", 50, 0, 0, -20, 20, neckLimb);
   RUpperArmLimb = new StLimb("R\n Upper Arm", 50, 0, 0, -180, 180, RShoulderLimb);
-  RLowerArmLimb = new BendLimb("R \nLower Arm", 50, 0, 0, 0, 90, RUpperArmLimb);
-  LShoulderLimb = new BendLimb("L \nShoulder", 50, 0, 0, 180 - 20, 180 + 20, neckLimb);
-  LUpperArmLimb = new BendLimb("L \nUpper Arm", -50, 10, 0, -10, 90, LShoulderLimb);
-  LLowerArmLimb = new BendLimb("L \nLower Arm", -50, 10, 0, -10, 90, LUpperArmLimb);
-  Lthight = new BendLimb('L thigh', -70, 20, -40, -20, 0, torso);
-  Rthight = new BendLimb('R thigh', 70, 20, -40, -20, 0, torso);
-  Lshin = new BendLimb('L knee', -70, 20, -40, -20, 0, Lthight);
-  Rshin = new BendLimb('R knee', 70, 20, -40, -20, 0, Rthight);
+  RLowerArmLimb = new StLimb("R \nLower Arm", 50, 0, 0, 0, 90, RUpperArmLimb);
+  LShoulderLimb = new StLimb("L \nShoulder", 50, 0, 0, 180 - 20, 180 + 20, neckLimb);
+  LUpperArmLimb = new StLimb("L \nUpper Arm", -50, 10, 0, -10, 90, LShoulderLimb);
+  LLowerArmLimb = new StLimb("L \nLower Arm", -50, 10, 0, -10, 90, LUpperArmLimb);
+  Lthight = new StLimb('L thigh', -70, 20, -40, -20, 0, torso);
+  Rthight = new StLimb('R thigh', 70, 20, -40, -20, 0, torso);
+  Lshin = new BendLimb('L knee', -70, mouseX, mouseY, -20, 0, Lthight);
+  Rshin = new StLimb('R knee', 70, 20, -40, -20, 0, Rthight);
   
   // body.push([neckLimb, headLimb,torso,RShoulderLimb,LShoulderLimb,LUpperArmLimb,LLowerArmLimb,Lthight,Rthight,Lshin,Rshin]);
   // console.log(body)
@@ -143,8 +143,8 @@ var BendLimb = function(_label, _length, _startJointX, _startJointY,
 
 }
 
-BendLimb.prototype.dJoints = function(parentEnd, leaderPt) {//whatever you feed it later
-  return dist(parentEnd.x, parentEnd.y, leaderPt.x, leaderPt.y);
+BendLimb.prototype.dJoints = function(leaderPt) {//distance from parent to IKlead
+  return dist( this.startJointX,this.startJointX, leaderPt.x, leaderPt.y);
 }
 
 BendLimb.prototype.update = function(_currentDegrees) {
@@ -157,8 +157,8 @@ BendLimb.prototype.update = function(_currentDegrees) {
     this.startJointY = this.parentEnd.endJointY;
   }
 
-  this.endJointX = this.startJointX + cos(radians(this.currentDegrees)) * this.limbLength;
-  this.endJointY = this.startJointY + sin(radians(this.currentDegrees)) * this.limbLength;
+  // this.endJointX = this.startJointX + cos(radians(this.currentDegrees)) * this.limbLength;
+  // this.endJointY = this.startJointY + sin(radians(this.currentDegrees)) * this.limbLength;
 
   //dont go beyond min and max
   if (this.currentDegrees < this.startJointMinDegrees) {
@@ -176,10 +176,11 @@ BendLimb.prototype.draw = function() {
   noStroke();
   rect(this.x, this.y, 20, 20);
   strokeWeight(5);
-  stroke(0)
+  stroke(0);
   line(this.startJointX, this.startJointY, this.elbowX, this.elbowY); //draw a line from this x,y to
-  noStroke();
-  text(this.label, this.endJointX, this.endJointY + 10);
+  // noStroke();
+  // text(this.label, this.endJointX, this.endJointY + 10);
+  // this.linkStart(this.parentEnd);//add limbstart here?
 }
 
 

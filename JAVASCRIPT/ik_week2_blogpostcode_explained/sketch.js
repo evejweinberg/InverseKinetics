@@ -9,20 +9,21 @@ createCanvas(800, 800);
 function draw() {
   background(255);
 
-  bicep = new Link(200, 200, 'A'); 
-  forearm = new Link(mouseX, mouseY, 'B'); 
+  bicep = new Link('A', 230, 200, 200 ); 
+  forearm = new Link('B', 130, mouseX, mouseY ); 
   forearm.linkStart(bicep); 
   bicep.linkEnd(forearm);
 }
 
 
 
-function Link(x, y, l) {
+function Link(label, _length, x, y) {
   this.x = x;
   this.y = y;
-  this.l = l;
+  this.l = label;
   this.elbowX;
   this.elbowY;
+  this.length = _length;
 }
 
 function dJoints(shoulder, wrist) { 
@@ -58,8 +59,8 @@ Link.prototype.linkStart = function(wrist) {
   var distance = dJoints(this, wrist);
   console.log("distance of joints" + dJoints(forearm, wrist))
 
-  var a = (Math.pow(armLength, 2) - Math.pow(armLength, 2) + Math.pow(distance, 2) / (2 * distance));
-  var h = Math.sqrt(Math.pow(armLength, 2) - Math.pow(a, 2));
+  var a = (Math.pow(this.length, 2) - Math.pow(this.length, 2) + Math.pow(distance, 2) / (2 * distance));
+  var h = Math.sqrt(Math.pow(this.length, 2) - Math.pow(a, 2));
   console.log("LINK START| a:  " + a + " || " + "h:  " + h);
   
   //Now that we have (a) and (h) we can work out the coordinates of point P:
@@ -79,8 +80,8 @@ Link.prototype.linkStart = function(wrist) {
 
 Link.prototype.linkEnd = function(wrist) {
   var dist = -dJoints(this, wrist);
-  var a = (Math.pow(armLength, 2) - Math.pow(armLength, 2) + Math.pow(dist, 2) / (2 * dist));
-  var h = Math.sqrt(Math.pow(armLength, 2) - Math.pow(a, 2));
+  var a = (Math.pow(this.length, 2) - Math.pow(this.length, 2) + Math.pow(dist, 2) / (2 * dist));
+  var h = Math.sqrt(Math.pow(this.length, 2) - Math.pow(a, 2));
   console.log("LINK END| a:  " + a + " || " + "h:  " + h);
 
 

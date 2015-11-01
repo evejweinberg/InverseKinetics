@@ -8,7 +8,7 @@ function setup() {
   stroke(255);
   strokeWeight(2);
   ellipseMode(CENTER);
-  armLength = 100;
+  armLength = random(300,500);
   correctSpeed = .05;
 
 }
@@ -50,6 +50,7 @@ function keyTyped() {
 
 
 function mousePressed() {
+ 
   var newArm = new drawArm(mouseX, mouseY); //spawn new object at mousex,y
   var makeNew = false; //default
   for (ar in arms) {
