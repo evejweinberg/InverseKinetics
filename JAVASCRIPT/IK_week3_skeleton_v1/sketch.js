@@ -7,11 +7,12 @@ var leftLowerLeg;
 var rightUpperLeg;
 var rightLowerLeg;
 var body = [];
+var speed = 1;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
-  
+
   // body = [
   // neckLimb = new StLimb("Neck", 0, 40, 100, 90, 90),
   // headLimb = new StLimb("Head", 50, 100, 100, 200, 340, neckLimb),
@@ -27,9 +28,9 @@ function setup() {
   // Lshin = new BendLimb('L knee', -70, 20, -40, -20, 0, Lthight),
   // Rshin = new BendLimb('R knee', 70, 20, -40, -20, 0, Rthight)
   // ];
-  
 
-  neckLimb = new StLimb("Neck", 0, 40, 100, 90, 90);
+
+  neckLimb = new StLimb("Neck", 0, 200, 100, 90, 90);
   headLimb = new StLimb("Head", 50, 100, 100, 200, 340, neckLimb);
   torso = new StLimb("Torso", 200, 100, 100, 90, 90, neckLimb);
   RShoulderLimb = new StLimb("R \nShoulder", 50, 0, 0, -20, 20, neckLimb);
@@ -40,9 +41,9 @@ function setup() {
   LLowerArmLimb = new StLimb("L \nLower Arm", -50, 10, 0, -10, 90, LUpperArmLimb);
   Lthight = new StLimb('L thigh', -70, 20, -40, -20, 0, torso);
   Rthight = new StLimb('R thigh', 70, 20, -40, -20, 0, torso);
-  Lshin = new BendLimb('L knee', -70, mouseX, mouseY, -20, 0, Lthight);
+  Lshin = new StLimb('L knee', -70, mouseX, mouseY, -20, 0, Lthight);
   Rshin = new StLimb('R knee', 70, 20, -40, -20, 0, Rthight);
-  
+
   // body.push([neckLimb, headLimb,torso,RShoulderLimb,LShoulderLimb,LUpperArmLimb,LLowerArmLimb,Lthight,Rthight,Lshin,Rshin]);
   // console.log(body)
 }
@@ -51,8 +52,10 @@ function draw() {
   background(255);
 
   if (mouseIsPressed) {
-    neckLimb.startJointX = mouseX;
-    neckLimb.startJointY = mouseY;
+    LLowerArmLimb.move();
+    RLowerArmLimb.move();
+    RUpperArmLimb.move();
+    Lthight.move();
   }
 
   neckLimb.draw();
@@ -82,10 +85,27 @@ var StLimb = function(_label, _length, _startJointX, _startJointY,
   this.startJointMinDegrees = _startJointMinDegrees;
   this.startJointMaxDegrees = _startJointMaxDegrees;
 
-  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2);
-  //start at the average
-  //if reaches beyond min or max, equals min max
-}
+  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2); //current degree is min+max /2
+  // if (this.currentDegrees < this.startJointMinDegrees) {
+  //   this.currentDegrees = this.currentDegrees;
+  // }
+  // if (this.currentDegrees > this.startJointMaxDegrees) {
+  //   this.currentDegrees = this.currentDegrees;
+  // }
+
+};
+
+StLimb.prototype.move = function(_x, _y) {
+
+
+  this.update(this.currentDegrees + speed);
+  if (this.currentDegrees < this.startJointMinDegrees || this.currentDegrees > this.startJointMinDegrees) {
+    console.log(this.parentEnd + 'true')
+    speed = -speed
+  }
+  // console.log(abs(this.currentDegrees-this.startJointMinDegrees))
+  //clamp the degree of rotation here?
+};
 
 StLimb.prototype.update = function(_currentDegrees) {
   if (typeof _currentDegrees != "undefined") {
@@ -108,7 +128,7 @@ StLimb.prototype.update = function(_currentDegrees) {
     this.currentDegrees = this.currentDegrees;
   }
 
-}
+};
 
 StLimb.prototype.draw = function() {
   this.update();
@@ -138,13 +158,13 @@ var BendLimb = function(_label, _length, _startJointX, _startJointY,
   this.elbowX;
   this.elbowY;
 
-  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2);//start at this degree
+  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2); //start at this degree
 
 
 }
 
-BendLimb.prototype.dJoints = function(leaderPt) {//distance from parent to IKlead
-  return dist( this.startJointX,this.startJointX, leaderPt.x, leaderPt.y);
+BendLimb.prototype.dJoints = function(leaderPt) { //distance from parent to IKlead
+  return dist(this.startJointX, this.startJointX, leaderPt.x, leaderPt.y);
 }
 
 BendLimb.prototype.update = function(_currentDegrees) {
@@ -184,13 +204,12 @@ BendLimb.prototype.draw = function() {
 }
 
 
-BendLimb.prototype.linkStart = function(leaderPt) {//where do I call this?
-  var distance = dJoints(this, leaderPt);//itself to what you pass it later. Where do I pass this?
-  // console.log("distance of joints" + dJoints(this.parentEnd, leaderPt))
+BendLimb.prototype.linkStart = function(leaderPt) { //where do I call this?
+  var distance = dJoints(this, leaderPt); //itself to what you pass it later. Where do I pass this?
 
   var a = (Math.pow(this.limbLength, 2) - Math.pow(this.limbLength, 2) + Math.pow(distance, 2) / (2 * distance));
   var h = Math.sqrt(Math.pow(this.limbLength, 2) - Math.pow(a, 2));
- 
+
 
   var px = this.startJointX + a * (leaderPt.x - this.startJointX) / distance;
   var py = this.startJointY + a * (leaderPt.y - this.startJointY) / distance;
@@ -198,16 +217,15 @@ BendLimb.prototype.linkStart = function(leaderPt) {//where do I call this?
   this.elbowX = px + h * (leaderPt.y - this.startJointY) / distance;
   this.elbowY = py - h * (leaderPt.x - this.startJointX) / distance;
 
-  // this.draw();//can I just call this here?
+
 }
 
-BendLimb.prototype.linkEnd = function(leaderPt) {//where do I call this?
-  var distance = -dJoints(this, leaderPt);//itself to what you pass it later. Where do I pass this?
-  // console.log("distance of joints" + dJoints(this.parentEnd, leaderPt))
+BendLimb.prototype.linkEnd = function(leaderPt) { //where do I call this?
+  var distance = -dJoints(this, leaderPt); //itself to what you pass it later. Where do I pass this?
 
   var a = (Math.pow(this.limbLength, 2) - Math.pow(this.limbLength, 2) + Math.pow(distance, 2) / (2 * distance));
   var h = Math.sqrt(Math.pow(this.limbLength, 2) - Math.pow(a, 2));
- 
+
 
   var px = this.startJointX + a * (leaderPt.x - this.startJointX) / distance;
   var py = this.startJointY + a * (leaderPt.y - this.startJointY) / distance;

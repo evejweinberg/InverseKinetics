@@ -16,7 +16,7 @@ function setup() {
 function draw() {
   background(0);
   fill(255);
-  textSize(20);
+  textSize(12);
   text('press Z to undo a joint', 0, 30)
 
   for (ar in arms) { //run through them all, for loop
