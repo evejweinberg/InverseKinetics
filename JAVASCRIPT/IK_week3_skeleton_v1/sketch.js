@@ -1,48 +1,42 @@
+//http://www.mathworks.com/help/fuzzy/examples/modeling-inverse-kinematics-in-a-robotic-arm.html?requestedDomain=www.mathworks.com
 var headLimb;
 var torso;
-var LShoulderLimb, LUpperArmLimb, LLowerArmLimb;
-var RShoulderLimb, RUpperArmLimb, RLowerArmLimb;
+var LShoulderLimb, LUpperArmLimb, LLowerArmLimb, Lhip;
+var RShoulderLimb, RUpperArmLimb, RLowerArmLimb, Rhip, Rknee;
 var leftUpperLeg;
 var leftLowerLeg;
 var rightUpperLeg;
 var rightLowerLeg;
 var body = [];
-var speed = 1;
+var globalspeed = 1;
+var BodycenterX = 100;
+var BodycenterY = 600;
+var hipWidth = 40;
+var rotationspeed = 1;
 
 function setup() {
+  angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight);
   noStroke();
 
-  // body = [
-  // neckLimb = new StLimb("Neck", 0, 40, 100, 90, 90),
-  // headLimb = new StLimb("Head", 50, 100, 100, 200, 340, neckLimb),
-  // torso = new StLimb("Torso", 200, 100, 100, 90, 90, neckLimb),
-  // RShoulderLimb = new StLimb("R \nShoulder", 50, 0, 0, -20, 20, neckLimb),
-  // RUpperArmLimb = new StLimb("R\n Upper Arm", 50, 0, 0, -180, 180, RShoulderLimb),
-  // RLowerArmLimb = new BendLimb("R \nLower Arm", 50, 0, 0, 0, 90, RUpperArmLimb),
-  // LShoulderLimb = new BendLimb("L \nShoulder", 50, 0, 0, 180 - 20, 180 + 20, neckLimb),
-  // LUpperArmLimb = new BendLimb("L \nUpper Arm", -50, 10, 0, -10, 90, LShoulderLimb),
-  // LLowerArmLimb = new BendLimb("L \nLower Arm", -50, 10, 0, -10, 90, LUpperArmLimb),
-  // Lthight = new BendLimb('L thigh', -70, 20, -40, -20, 0, torso),
-  // Rthight = new BendLimb('R thigh', 70, 20, -40, -20, 0, torso),
-  // Lshin = new BendLimb('L knee', -70, 20, -40, -20, 0, Lthight),
-  // Rshin = new BendLimb('R knee', 70, 20, -40, -20, 0, Rthight)
-  // ];
+  //_label, _length, _startJointX, _startJointY,
+  //_startJointMinDegrees, _startJointMaxDegrees, _parentEnd
+  torso = new StLimb("Torso", 0, BodycenterX, BodycenterY, -90, -90, -90);
+  neckLimb = new StLimb("Neck", 100, 0, 0, 0, 0, 0, torso); //leader of everything
+  headLimb = new StLimb("Head", 50, 0, 0, 0, 0, 0, neckLimb);
 
+  RShoulderLimb = new StLimb("R \nShoulder", hipWidth, 0, 0, 90, 90, 90, neckLimb);
+  LShoulderLimb = new StLimb("L \nShoulder", hipWidth, 0, 0, -90, -90, -90, neckLimb);
+  RUpperArmLimb = new StLimb("R\n Upper Arm", 50, 0, 0, -90, 90, 0, RShoulderLimb);
+  LUpperArmLimb = new StLimb("L \nUpper Arm", 50, 0, 0, 90, 270, 180, LShoulderLimb);
 
-  neckLimb = new StLimb("Neck", 0, 200, 100, 90, 90);
-  headLimb = new StLimb("Head", 50, 100, 100, 200, 340, neckLimb);
-  torso = new StLimb("Torso", 200, 100, 100, 90, 90, neckLimb);
-  RShoulderLimb = new StLimb("R \nShoulder", 50, 0, 0, -20, 20, neckLimb);
-  RUpperArmLimb = new StLimb("R\n Upper Arm", 50, 0, 0, -180, 180, RShoulderLimb);
-  RLowerArmLimb = new StLimb("R \nLower Arm", 50, 0, 0, 0, 90, RUpperArmLimb);
-  LShoulderLimb = new StLimb("L \nShoulder", 50, 0, 0, 180 - 20, 180 + 20, neckLimb);
-  LUpperArmLimb = new StLimb("L \nUpper Arm", -50, 10, 0, -10, 90, LShoulderLimb);
-  LLowerArmLimb = new StLimb("L \nLower Arm", -50, 10, 0, -10, 90, LUpperArmLimb);
-  Lthight = new StLimb('L thigh', -70, 20, -40, -20, 0, torso);
-  Rthight = new StLimb('R thigh', 70, 20, -40, -20, 0, torso);
-  Lshin = new StLimb('L knee', -70, mouseX, mouseY, -20, 0, Lthight);
-  Rshin = new StLimb('R knee', 70, 20, -40, -20, 0, Rthight);
+  RLowerArmLimb = new StLimb("R \nLower Arm", 50, 0, 0, 90, -90, 0, RUpperArmLimb);
+  LLowerArmLimb = new StLimb("L \nLower Arm", 50, 10, 0, -10, 0,0, LUpperArmLimb);
+  
+  Lhip = new StLimb('L hip', hipWidth, 0, 0, -90, -50, -90, torso);
+  Rhip = new StLimb('R hip', hipWidth, 0, 0, 50, 100, 90, torso);
+  Lshin = new StLimb('L knee', 70, 0, 0, -90, 0, -90, Lhip);
+  Rknee = new StLimb('R knee', 70, 0, 0, -20, 70, -180, Rhip);
 
   // body.push([neckLimb, headLimb,torso,RShoulderLimb,LShoulderLimb,LUpperArmLimb,LLowerArmLimb,Lthight,Rthight,Lshin,Rshin]);
   // console.log(body)
@@ -55,7 +49,12 @@ function draw() {
     LLowerArmLimb.move();
     RLowerArmLimb.move();
     RUpperArmLimb.move();
-    Lthight.move();
+    LUpperArmLimb.move();
+    // Rthight.move();
+    Lhip.move();
+    Rhip.move();
+    Rknee.move();
+    Lshin.move();
   }
 
   neckLimb.draw();
@@ -67,16 +66,20 @@ function draw() {
   RLowerArmLimb.draw();
   LUpperArmLimb.draw();
   LLowerArmLimb.draw();
-  Lthight.draw();
-  Rthight.draw();
+  Lhip.draw();
+  Rhip.draw();
   Lshin.draw();
-  Rshin.draw();
+  Rknee.draw();
 }
 
 
-// Construct a static limb, it will be the length staring at the start joing position, towards the end joint position, not to exceed the min and max degree parameters
+// Construct a static limb, it will be the length staring at the start joing position, 
+//towards the end joint position, not to exceed the min and max degree parameters
 var StLimb = function(_label, _length, _startJointX, _startJointY,
-  _startJointMinDegrees, _startJointMaxDegrees, _parentEnd) {
+  _startJointMinDegrees, _startJointMaxDegrees, _startingPossition, _parentEnd) {
+
+  this.relativeDegrees = _startingPossition; //start at a halfway pt
+
   this.label = _label;
   this.limbLength = _length; // In pixels, angled off startJoint
   this.parentEnd = _parentEnd;
@@ -84,24 +87,34 @@ var StLimb = function(_label, _length, _startJointX, _startJointY,
   this.startJointY = _startJointY;
   this.startJointMinDegrees = _startJointMinDegrees;
   this.startJointMaxDegrees = _startJointMaxDegrees;
+  this.speed = 1;
+  if (this.parentEnd != undefined) { //if you have a parent
+    this.currentDegrees = this.parentEnd.currentDegrees + this.relativeDegrees; //
+    console.log("parent" + this.parentEnd.currentDegrees);
+  } else {
+    this.currentDegrees = this.relativeDegrees;
+  }
 
-  this.update((this.startJointMinDegrees + this.startJointMaxDegrees) / 2); //current degree is min+max /2
-  // if (this.currentDegrees < this.startJointMinDegrees) {
-  //   this.currentDegrees = this.currentDegrees;
-  // }
-  // if (this.currentDegrees > this.startJointMaxDegrees) {
-  //   this.currentDegrees = this.currentDegrees;
-  // }
+
+
+
+  this.update(this.startJointMinDegrees); //current degree is min+max /2
+
 
 };
 
 StLimb.prototype.move = function(_x, _y) {
+  //console.log(this.label + this.speed);
 
-
-  this.update(this.currentDegrees + speed);
-  if (this.currentDegrees < this.startJointMinDegrees || this.currentDegrees > this.startJointMinDegrees) {
-    console.log(this.parentEnd + 'true')
-    speed = -speed
+  this.update(this.relativeDegrees + rotationspeed * this.speed);
+  if (this.relativeDegrees < this.startJointMinDegrees || this.relativeDegrees > this.startJointMaxDegrees) {
+    this.speed = -1 * this.speed;
+  }
+  console.log(this.relativeDegrees);
+  if (this.parentEnd != null) {
+    this.currentDegrees = this.parentEnd.currentDegrees + this.relativeDegrees;
+  } else {
+    this.currentDegrees = this.relativeDegrees;
   }
   // console.log(abs(this.currentDegrees-this.startJointMinDegrees))
   //clamp the degree of rotation here?
@@ -109,23 +122,34 @@ StLimb.prototype.move = function(_x, _y) {
 
 StLimb.prototype.update = function(_currentDegrees) {
   if (typeof _currentDegrees != "undefined") {
-    this.currentDegrees = _currentDegrees;
+    this.relativeDegrees = _currentDegrees;
   }
 
   if (typeof this.parentEnd !== 'undefined' || this.parentEnd != null) { //if it exists
     this.startJointX = this.parentEnd.endJointX; //start this joint at the parent's end 
     this.startJointY = this.parentEnd.endJointY;
+
+    // this.endJointX = this.startJointX + cos(this.currentDegrees) * this.limbLength;
+    // this.endJointY = this.startJointY + sin(this.currentDegrees) * this.limbLength;
   }
 
-  this.endJointX = this.startJointX + cos(radians(this.currentDegrees)) * this.limbLength;
-  this.endJointY = this.startJointY + sin(radians(this.currentDegrees)) * this.limbLength;
+  if (this.parentEnd != null) {
+    this.currentDegrees = this.parentEnd.currentDegrees + this.relativeDegrees;
+  } else {
+    this.currentDegrees = this.relativeDegrees;
+  }
+
+
+  this.endJointX = this.startJointX + cos((this.currentDegrees)) * this.limbLength;
+  this.endJointY = this.startJointY + sin((this.currentDegrees)) * this.limbLength;
+
 
   //dont go beyond min and max
-  if (this.currentDegrees < this.startJointMinDegrees) {
-    this.currentDegrees = this.currentDegrees;
+  if (this.relativeDegrees < this.startJointMinDegrees) {
+    this.relativeDegrees = this.relativeDegrees;
   }
-  if (this.currentDegrees > this.startJointMaxDegrees) {
-    this.currentDegrees = this.currentDegrees;
+  if (this.relativeDegrees > this.startJointMaxDegrees) {
+    this.relativeDegrees = this.relativeDegrees;
   }
 
 };
